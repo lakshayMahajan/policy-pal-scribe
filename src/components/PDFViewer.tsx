@@ -34,7 +34,7 @@ SECTION II - EXCLUSIONS
 We will not pay for loss or damage caused by or resulting from:
 
 A. Water Damage
-Damage caused by water, except as specifically covered under this policy. This exclusion applies regardless of whether the water damage results from natural flooding, broken pipes, or any other source.
+Damage caused by water damage, except as specifically covered under this policy. This exclusion applies regardless of whether the water damage results from natural flooding, broken pipes, or any other source.
 
 B. Notification Requirements
 The policyholder must notify the company within a reasonable time of any claim or circumstance that may give rise to a claim under this policy.
@@ -92,25 +92,30 @@ export const PDFViewer = ({ suggestions, onSuggestionHover, onSuggestionClick, s
     // Sort suggestions by length (longest first) to avoid nested replacements
     const sortedSuggestions = [...suggestions].sort((a, b) => b.original.length - a.original.length);
     
+    console.log('Highlighting suggestions:', sortedSuggestions.map(s => s.original));
+    
     sortedSuggestions.forEach(suggestion => {
       const isSelected = selectedSuggestion === suggestion.id;
       
       // Enhanced highlighting with better visibility
-      const baseClasses = 'relative inline-block px-2 py-1 rounded-md cursor-pointer transition-all duration-200 border-2';
+      const baseClasses = 'relative inline-block px-2 py-1 rounded-md cursor-pointer transition-all duration-200 border-2 font-semibold';
       const severityClasses = {
-        'High': 'border-red-500 bg-red-100 hover:bg-red-200',
-        'Medium': 'border-amber-500 bg-amber-100 hover:bg-amber-200',
-        'Low': 'border-green-500 bg-green-100 hover:bg-green-200'
+        'High': 'border-red-600 bg-red-200 hover:bg-red-300 text-red-900',
+        'Medium': 'border-amber-600 bg-amber-200 hover:bg-amber-300 text-amber-900',
+        'Low': 'border-green-600 bg-green-200 hover:bg-green-300 text-green-900'
       };
       
       const selectedClasses = isSelected 
-        ? 'ring-4 ring-blue-300 bg-blue-200 shadow-lg scale-105' 
+        ? 'ring-4 ring-blue-400 bg-blue-300 shadow-xl scale-110 z-10' 
         : '';
       
       const combinedClasses = `${baseClasses} ${severityClasses[suggestion.severity]} ${selectedClasses}`;
 
-      // Use a more specific replacement to avoid conflicts
-      const regex = new RegExp(`\\b${suggestion.original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
+      // Create a case-insensitive regex that matches the exact phrase
+      const regex = new RegExp(`\\b${suggestion.original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+      
+      const matches = text.match(regex);
+      console.log(`Looking for "${suggestion.original}", found:`, matches);
       
       highlightedText = highlightedText.replace(
         regex,
@@ -119,8 +124,8 @@ export const PDFViewer = ({ suggestions, onSuggestionHover, onSuggestionClick, s
           data-suggestion-id="${suggestion.id}"
           title="Click to view details - Risk Score: ${suggestion.riskScore}/10"
         >
-          ${suggestion.original}
-          <span class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
+          $&
+          <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity whitespace-nowrap z-30 pointer-events-none shadow-lg">
             ${suggestion.clauseId} | Risk: ${suggestion.riskScore}/10 | ${suggestion.severity}
           </span>
         </span>`

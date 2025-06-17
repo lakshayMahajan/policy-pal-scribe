@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PolicyViewer } from '@/components/PolicyViewer';
 import { Sidebar } from '@/components/Sidebar';
@@ -5,6 +6,8 @@ import { Header } from '@/components/Header';
 import { DocumentAssessment } from '@/types/insurance';
 
 const Index = () => {
+  const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
+  
   const mockAssessment: DocumentAssessment = {
     confidenceScore: 74,
     totalClauses: 12,
@@ -49,11 +52,20 @@ const Index = () => {
     }
   ];
 
+  const handleSuggestionClick = (id: string) => {
+    setSelectedSuggestion(id);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="flex">
-        <Sidebar assessment={mockAssessment} suggestions={mockSuggestions} />
+        <Sidebar 
+          assessment={mockAssessment} 
+          suggestions={mockSuggestions}
+          onSuggestionClick={handleSuggestionClick}
+          selectedSuggestion={selectedSuggestion}
+        />
         <main className="flex-1">
           <PolicyViewer />
         </main>
