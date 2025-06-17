@@ -44,7 +44,8 @@ export const analyzeDocument = async (documentText: string): Promise<ApiResponse
   });
   
   if (!response.ok) {
-    throw new Error('Failed to analyze document');
+    const errorText = await response.text();
+    throw new Error(`Failed to analyze document: ${response.status} - ${errorText}`);
   }
   
   return response.json();
@@ -63,11 +64,14 @@ export const extractTextFromFile = async (file: File): Promise<string> => {
       reject(new Error('Failed to read file'));
     };
     
-    if (file.type === 'text/plain') {
+    if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
       reader.readAsText(file);
+    } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+      reject(new Error('PDF files are not yet supported. Please upload a text file (.txt) for now.'));
+    } else if (file.type.includes('word') || file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+      reject(new Error('Word documents are not yet supported. Please upload a text file (.txt) for now.'));
     } else {
-      // For now, we'll handle text files. You can extend this for PDF, etc.
-      reject(new Error('Unsupported file type. Please upload a text file.'));
+      reject(new Error(`Unsupported file type: ${file.type || 'unknown'}. Please upload a text file (.txt).`));
     }
   });
 };
