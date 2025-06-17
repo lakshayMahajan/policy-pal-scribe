@@ -1,12 +1,12 @@
+// This file is no longer needed - replaced by useDocumentAnalysis.ts
+// Keeping for reference but not exporting anything
 
 import { useQuery } from '@tanstack/react-query';
-import { fetchInsuranceAnalysis } from '@/services/api';
 
-export const useInsuranceAnalysis = () => {
-  return useQuery({
-    queryKey: ['insurance-analysis'],
-    queryFn: fetchInsuranceAnalysis,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
-  });
+const fetchInsuranceAnalysis = async () => {
+  // This was the old auto-fetch approach
+  throw new Error('This hook is deprecated - use useDocumentAnalysis instead');
 };
+
+// Export nothing to prevent usage
+export {};
