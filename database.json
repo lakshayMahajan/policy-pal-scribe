@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "name": "Sample Policy",
+    "description": "This is a sample policy"
+  },
+  {
+    "id": 2,
+    "name": "Another Policy",
+    "description": "More policy data"
+  }
+]
+
