@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { Header } from '@/components/Header';
 import { Brain, Shield, Scale, Search, Target, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -106,7 +106,8 @@ const Workflow = () => {
   const completedAgents = agents.filter(agent => agent.status === 'completed').length;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
+      <Header />
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Agent Workflow</h1>

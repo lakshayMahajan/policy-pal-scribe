@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { PolicyViewer } from '@/components/PolicyViewer';
 import { Sidebar } from '@/components/Sidebar';
 import { Header } from '@/components/Header';
