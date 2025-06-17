@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ZoomIn, ZoomOut, Download, Printer, Search, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,35 +60,68 @@ export const PDFViewer = ({ suggestions, onSuggestionHover, onSuggestionClick, s
   const [zoom, setZoom] = useState(100);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const contentRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 25, 200));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 25, 50));
 
+  // Scroll to selected suggestion
+  useEffect(() => {
+    if (selectedSuggestion && contentRef.current && containerRef.current) {
+      const highlightElement = contentRef.current.querySelector(`[data-suggestion-id="${selectedSuggestion}"]`);
+      if (highlightElement) {
+        const elementRect = highlightElement.getBoundingClientRect();
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const scrollTop = containerRef.current.scrollTop;
+        
+        // Calculate the position to scroll to (center the element in view)
+        const targetScrollTop = scrollTop + elementRect.top - containerRect.top - (containerRect.height / 2);
+        
+        containerRef.current.scrollTo({
+          top: Math.max(0, targetScrollTop),
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [selectedSuggestion]);
+
   const highlightSuggestions = (text: string) => {
     let highlightedText = text;
     
-    suggestions.forEach(suggestion => {
+    // Sort suggestions by length (longest first) to avoid nested replacements
+    const sortedSuggestions = [...suggestions].sort((a, b) => b.original.length - a.original.length);
+    
+    sortedSuggestions.forEach(suggestion => {
       const isSelected = selectedSuggestion === suggestion.id;
-      const highlightClass = isSelected 
-        ? 'bg-blue-200 border-b-2 border-blue-500 cursor-pointer' 
-        : 'bg-yellow-100 hover:bg-yellow-200 cursor-pointer border-b border-yellow-400';
       
-      const riskColorClass = suggestion.severity === 'High' 
-        ? 'border-l-4 border-red-500' 
-        : suggestion.severity === 'Medium' 
-        ? 'border-l-4 border-amber-500' 
-        : 'border-l-4 border-green-500';
+      // Enhanced highlighting with better visibility
+      const baseClasses = 'relative inline-block px-2 py-1 rounded-md cursor-pointer transition-all duration-200 border-2';
+      const severityClasses = {
+        'High': 'border-red-500 bg-red-100 hover:bg-red-200',
+        'Medium': 'border-amber-500 bg-amber-100 hover:bg-amber-200',
+        'Low': 'border-green-500 bg-green-100 hover:bg-green-200'
+      };
+      
+      const selectedClasses = isSelected 
+        ? 'ring-4 ring-blue-300 bg-blue-200 shadow-lg scale-105' 
+        : '';
+      
+      const combinedClasses = `${baseClasses} ${severityClasses[suggestion.severity]} ${selectedClasses}`;
 
+      // Use a more specific replacement to avoid conflicts
+      const regex = new RegExp(`\\b${suggestion.original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
+      
       highlightedText = highlightedText.replace(
-        suggestion.original,
+        regex,
         `<span 
-          class="${highlightClass} ${riskColorClass} px-1 py-0.5 rounded-sm relative" 
+          class="${combinedClasses}" 
           data-suggestion-id="${suggestion.id}"
-          title="Risk Score: ${suggestion.riskScore}/10 - ${suggestion.type}"
+          title="Click to view details - Risk Score: ${suggestion.riskScore}/10"
         >
           ${suggestion.original}
-          <span class="absolute -top-6 left-0 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-            ${suggestion.clauseId} - Risk: ${suggestion.riskScore}/10
+          <span class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
+            ${suggestion.clauseId} | Risk: ${suggestion.riskScore}/10 | ${suggestion.severity}
           </span>
         </span>`
       );
@@ -99,16 +132,28 @@ export const PDFViewer = ({ suggestions, onSuggestionHover, onSuggestionClick, s
 
   const handleTextClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
-    const suggestionId = target.getAttribute('data-suggestion-id');
+    const suggestionId = target.getAttribute('data-suggestion-id') || 
+                        target.closest('[data-suggestion-id]')?.getAttribute('data-suggestion-id');
     if (suggestionId) {
+      e.preventDefault();
       onSuggestionClick(suggestionId);
     }
   };
 
   const handleTextHover = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
-    const suggestionId = target.getAttribute('data-suggestion-id');
+    const suggestionId = target.getAttribute('data-suggestion-id') || 
+                        target.closest('[data-suggestion-id]')?.getAttribute('data-suggestion-id');
     onSuggestionHover(suggestionId);
+  };
+
+  const handleTextLeave = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    const suggestionId = target.getAttribute('data-suggestion-id') || 
+                        target.closest('[data-suggestion-id]')?.getAttribute('data-suggestion-id');
+    if (suggestionId) {
+      onSuggestionHover(null);
+    }
   };
 
   return (
@@ -157,9 +202,9 @@ export const PDFViewer = ({ suggestions, onSuggestionHover, onSuggestionClick, s
       </div>
 
       {/* PDF Document */}
-      <div className="flex-1 overflow-auto bg-gray-300 p-4">
+      <div ref={containerRef} className="flex-1 overflow-auto bg-gray-300 p-4">
         <div 
-          className="max-w-4xl mx-auto bg-white shadow-lg"
+          className="max-w-4xl mx-auto bg-white shadow-lg transition-transform duration-200"
           style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center' }}
         >
           {/* PDF Header */}
@@ -172,12 +217,17 @@ export const PDFViewer = ({ suggestions, onSuggestionHover, onSuggestionClick, s
 
           {/* PDF Content */}
           <div 
-            className="p-8 leading-relaxed text-sm font-mono"
+            ref={contentRef}
+            className="p-8 leading-relaxed text-sm font-mono selection:bg-blue-200"
             onClick={handleTextClick}
             onMouseOver={handleTextHover}
-            onMouseLeave={() => onSuggestionHover(null)}
+            onMouseLeave={handleTextLeave}
             dangerouslySetInnerHTML={{ 
-              __html: highlightSuggestions(policyText).replace(/\n/g, '<br>') 
+              __html: highlightSuggestions(policyText)
+                .replace(/\n\n/g, '</p><p class="mb-4">')
+                .replace(/\n/g, '<br>')
+                .replace(/^/, '<p class="mb-4">')
+                .replace(/$/, '</p>')
             }}
           />
 
