@@ -110,22 +110,50 @@ const Index = () => {
     }
   };
 
-  // Map API suggestions to match the Suggestion interface
+  // Helper function to ensure severity is properly typed
+  const normalizeSeverity = (severity: string): 'High' | 'Medium' | 'Low' => {
+    const normalized = severity.charAt(0).toUpperCase() + severity.slice(1).toLowerCase();
+    if (normalized === 'High' || normalized === 'Medium' || normalized === 'Low') {
+      return normalized as 'High' | 'Medium' | 'Low';
+    }
+    return 'Low'; // Default fallback
+  };
+
+  // Helper function to ensure clause type is properly typed
+  const normalizeClauseType = (type: string): 'Liability' | 'Coverage' | 'Exclusion' | 'Deductible' | 'Premium' => {
+    const normalized = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+    const validTypes = ['Liability', 'Coverage', 'Exclusion', 'Deductible', 'Premium'];
+    if (validTypes.includes(normalized)) {
+      return normalized as 'Liability' | 'Coverage' | 'Exclusion' | 'Deductible' | 'Premium';
+    }
+    return 'Coverage'; // Default fallback
+  };
+
+  // Helper function to ensure suggestion type is properly typed
+  const normalizeSuggestionType = (type: string): 'Ambiguity' | 'Exploit Risk' | 'Missing Limitation' | 'Regulatory Conflict' | 'Coverage Gap' => {
+    const validTypes = ['Ambiguity', 'Exploit Risk', 'Missing Limitation', 'Regulatory Conflict', 'Coverage Gap'];
+    if (validTypes.includes(type)) {
+      return type as 'Ambiguity' | 'Exploit Risk' | 'Missing Limitation' | 'Regulatory Conflict' | 'Coverage Gap';
+    }
+    return 'Ambiguity'; // Default fallback
+  };
+
+  // Map API suggestions to match the Suggestion interface with proper typing
   const suggestions: Suggestion[] = analysisData.suggestions.map(s => ({
     id: s.id,
     clauseId: s.clauseId,
-    clauseType: s.clauseType as any,
+    clauseType: normalizeClauseType(s.clauseType),
     text: s.text,
-    original: s.text, // Use the suggestion text as the original text to highlight
+    original: s.text,
     suggestion: `Recommended improvement for ${s.clauseType.toLowerCase()} clause`,
-    start: 0, // Position will be calculated by the highlighting function
+    start: 0,
     end: s.text.length,
     approved: null,
-    type: s.type as any,
+    type: normalizeSuggestionType(s.type),
     riskScore: s.riskScore,
-    exploitScenario: `This ${s.severity.toLowerCase()} risk ${s.type.toLowerCase()} could lead to potential issues in claim processing.`,
+    exploitScenario: `This ${normalizeSeverity(s.severity).toLowerCase()} risk ${s.type.toLowerCase()} could lead to potential issues in claim processing.`,
     identifiedBy: 'AI Analysis Engine',
-    severity: s.severity
+    severity: normalizeSeverity(s.severity)
   }));
 
   return (
