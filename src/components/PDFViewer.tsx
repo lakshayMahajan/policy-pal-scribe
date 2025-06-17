@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ZoomIn, ZoomOut, Download, Print, Search, ChevronUp, ChevronDown } from 'lucide-react';
+import { ZoomIn, ZoomOut, Download, Printer, Search, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Suggestion } from '@/types/insurance';
@@ -148,7 +148,7 @@ export const PDFViewer = ({ suggestions, onSuggestionHover, onSuggestionClick, s
             />
           </div>
           <Button variant="ghost" size="sm" className="text-white hover:bg-gray-700">
-            <Print className="h-4 w-4" />
+            <Printer className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="sm" className="text-white hover:bg-gray-700">
             <Download className="h-4 w-4" />
