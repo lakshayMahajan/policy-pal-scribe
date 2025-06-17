@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { SuggestionCard } from '@/components/SuggestionCard';
-import { PolicyText } from '@/components/PolicyText';
+import { PDFViewer } from '@/components/PDFViewer';
 import { Suggestion } from '@/types/insurance';
 
 const mockSuggestions: Suggestion[] = [
@@ -42,8 +42,8 @@ const mockSuggestions: Suggestion[] = [
     clauseId: 'NOT-101',
     clauseType: 'Coverage',
     text: 'Notification period violates state regulatory requirements',
-    original: 'The policyholder must notify the company within a reasonable time of any claim',
-    suggestion: 'The policyholder must provide written notification to the company within thirty (30) days of discovering any claim or potential claim',
+    original: 'reasonable time',
+    suggestion: 'thirty (30) days',
     start: 678,
     end: 756,
     approved: null,
@@ -75,8 +75,8 @@ export const PolicyViewer = () => {
   };
 
   return (
-    <div className="relative">
-      <PolicyText 
+    <div className="relative h-screen">
+      <PDFViewer 
         suggestions={suggestions}
         onSuggestionHover={setHoveredSuggestion}
         onSuggestionClick={setSelectedSuggestion}
