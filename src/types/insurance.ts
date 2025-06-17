@@ -26,3 +26,28 @@ export interface DocumentAssessment {
     low: number;
   };
 }
+
+import type { ElementType } from 'react';
+
+export interface Agent {
+  id: string;
+  name: string;
+  icon: ElementType;
+  status: 'completed' | 'processing' | 'pending';
+  progress: number;
+  findings: number;
+  description: string;
+  lastRun: string;
+  processingTime: string;
+}
+
+export interface Assessment {
+  id: string;
+  policyName: string;
+  uploadDate: string;
+  status: 'completed' | 'processing' | 'failed';
+  riskScore: number;
+  flaggedClauses: number;
+  totalClauses: number;
+  version: string;
+}
