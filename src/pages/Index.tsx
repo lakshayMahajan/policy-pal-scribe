@@ -4,13 +4,13 @@ import { PolicyViewer } from '@/components/PolicyViewer';
 import { Sidebar } from '@/components/Sidebar';
 import { Header } from '@/components/Header';
 import { DocumentUpload } from '@/components/DocumentUpload';
-import { DocumentAssessment } from '@/types/insurance';
+import { DocumentAssessment, Suggestion } from '@/types/insurance';
 import { useDocumentAnalysis } from '@/hooks/useDocumentAnalysis';
 import { AlertCircle } from 'lucide-react';
 
 const Index = () => {
   const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
-  const { uploadAndAnalyze, isAnalyzing, analysisData, analysisError, fileName, reset } = useDocumentAnalysis();
+  const { uploadAndAnalyze, isAnalyzing, analysisData, analysisError, fileName, documentText, reset } = useDocumentAnalysis();
 
   const handleSuggestionClick = (id: string) => {
     setSelectedSuggestion(id);
@@ -110,13 +110,20 @@ const Index = () => {
     }
   };
 
-  const suggestions = analysisData.suggestions.map(s => ({
+  // Map API suggestions to match the Suggestion interface
+  const suggestions: Suggestion[] = analysisData.suggestions.map(s => ({
     id: s.id,
     clauseId: s.clauseId,
-    clauseType: s.clauseType,
+    clauseType: s.clauseType as any,
     text: s.text,
-    type: s.type,
+    original: s.text, // Use the suggestion text as the original text to highlight
+    suggestion: `Recommended improvement for ${s.clauseType.toLowerCase()} clause`,
+    start: 0, // Position will be calculated by the highlighting function
+    end: s.text.length,
+    approved: null,
+    type: s.type as any,
     riskScore: s.riskScore,
+    exploitScenario: `This ${s.severity.toLowerCase()} risk ${s.type.toLowerCase()} could lead to potential issues in claim processing.`,
     identifiedBy: 'AI Analysis Engine',
     severity: s.severity
   }));
@@ -132,7 +139,10 @@ const Index = () => {
           selectedSuggestion={selectedSuggestion}
         />
         <main className="flex-1">
-          <PolicyViewer />
+          <PolicyViewer 
+            suggestions={suggestions}
+            documentText={documentText}
+          />
         </main>
       </div>
     </div>
