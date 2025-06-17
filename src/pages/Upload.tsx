@@ -4,6 +4,9 @@ import { Upload as UploadIcon, FileText, CheckCircle, AlertCircle, Loader2 } fro
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import axios from 'axios'
+
+const nocodbapikey = import.meta.env.NOCODB_API_KEY;
 
 type UploadStatus = 'idle' | 'uploading' | 'processing' | 'completed' | 'error';
 
@@ -11,6 +14,7 @@ const Upload = () => {
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>('idle');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [fileName, setFileName] = useState('');
+  const [fileContent, setFileContent] = useState<string>('');
 
   const handleFileUpload = (file: File) => {
     setFileName(file.name);
@@ -23,7 +27,23 @@ const Upload = () => {
         if (prev >= 100) {
           clearInterval(interval);
           setUploadStatus('processing');
+
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              if (typeof e.target?.result === 'string') {
+                setFileContent(e.target.result);
+              } else {
+                alert('Unexpected file content format.');
+              }
+            };
+            reader.onerror = () => {
+              alert('Error reading the file.');
+            };
+            reader.readAsText(file);
+          }
           
+          databasePost();
           // Simulate processing
           setTimeout(() => {
             setUploadStatus('completed');
@@ -34,6 +54,7 @@ const Upload = () => {
         return prev + 10;
       });
     }, 200);
+
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -81,6 +102,31 @@ const Upload = () => {
     }
   };
 
+  const databasePost = async () => {
+    try {
+      await axios.post('https://app.nocodb.com/api/v2/tables/miq0dfta0t7lqpp/records', { 
+          headers: {
+            "accept": "application/json",
+            "xc-token": nocodbapikey,
+          },
+          body: {
+          "policyName": fileName,
+          "uploadDate": Date.now().toString(),
+          "status": "string",
+          "riskScore": "string",
+          "flaggedClauses": "string",
+          "totalClauses": "string",
+          "version": "string",
+          "text": fileContent}
+       });
+      alert('Data created successfully!');
+      // Optionally, fetch and update the displayed data
+    } catch (error) {
+      console.error('Error creating data:', error);
+    }
+
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -111,14 +157,14 @@ const Upload = () => {
                     <p className="text-gray-600 mb-4">or click to browse files</p>
                     <input
                       type="file"
-                      accept=".pdf"
+                      accept=".txt"
                       onChange={handleFileInput}
                       className="hidden"
                       id="file-upload"
                     />
                     <Button asChild>
                       <label htmlFor="file-upload" className="cursor-pointer">
-                        Select PDF File
+                        Select txt File
                       </label>
                     </Button>
                   </div>
