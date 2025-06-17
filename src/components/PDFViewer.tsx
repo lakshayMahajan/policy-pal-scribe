@@ -87,12 +87,26 @@ export const PDFViewer = ({ suggestions, onSuggestionHover, onSuggestionClick, s
   }, [selectedSuggestion]);
 
   const highlightSuggestions = (text: string) => {
-    let highlightedText = text;
+    console.log('Original policy text length:', text.length);
+    console.log('Policy text preview:', text.substring(0, 200));
+    
+    // First, convert newlines to HTML structure
+    let htmlText = text
+      .replace(/\n\n/g, '</p><p class="mb-4">')
+      .replace(/\n/g, '<br>')
+      .replace(/^/, '<p class="mb-4">')
+      .replace(/$/, '</p>');
+    
+    console.log('HTML structured text preview:', htmlText.substring(0, 300));
     
     // Sort suggestions by length (longest first) to avoid nested replacements
     const sortedSuggestions = [...suggestions].sort((a, b) => b.original.length - a.original.length);
     
-    console.log('Highlighting suggestions:', sortedSuggestions.map(s => s.original));
+    console.log('Processing suggestions:', sortedSuggestions.map(s => ({
+      id: s.id,
+      original: s.original,
+      severity: s.severity
+    })));
     
     sortedSuggestions.forEach(suggestion => {
       const isSelected = selectedSuggestion === suggestion.id;
@@ -111,28 +125,43 @@ export const PDFViewer = ({ suggestions, onSuggestionHover, onSuggestionClick, s
       
       const combinedClasses = `${baseClasses} ${severityClasses[suggestion.severity]} ${selectedClasses}`;
 
-      // Create a case-insensitive regex that matches the exact phrase
-      const regex = new RegExp(`\\b${suggestion.original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+      // Create a more flexible regex for case-insensitive matching
+      const escapedOriginal = suggestion.original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${escapedOriginal})`, 'gi');
       
-      const matches = text.match(regex);
-      console.log(`Looking for "${suggestion.original}", found:`, matches);
+      console.log(`Searching for "${suggestion.original}" with regex:`, regex);
       
-      highlightedText = highlightedText.replace(
-        regex,
-        `<span 
-          class="${combinedClasses}" 
-          data-suggestion-id="${suggestion.id}"
-          title="Click to view details - Risk Score: ${suggestion.riskScore}/10"
-        >
-          $&
-          <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity whitespace-nowrap z-30 pointer-events-none shadow-lg">
-            ${suggestion.clauseId} | Risk: ${suggestion.riskScore}/10 | ${suggestion.severity}
-          </span>
-        </span>`
-      );
+      // Check if the text exists before replacement
+      const matches = htmlText.match(regex);
+      console.log(`Matches found for "${suggestion.original}":`, matches);
+      
+      if (matches && matches.length > 0) {
+        htmlText = htmlText.replace(
+          regex,
+          `<span 
+            class="${combinedClasses}" 
+            data-suggestion-id="${suggestion.id}"
+            title="Click to view details - Risk Score: ${suggestion.riskScore}/10"
+          >
+            $1
+            <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity whitespace-nowrap z-30 pointer-events-none shadow-lg">
+              ${suggestion.clauseId} | Risk: ${suggestion.riskScore}/10 | ${suggestion.severity}
+            </span>
+          </span>`
+        );
+        console.log(`✅ Successfully highlighted "${suggestion.original}"`);
+      } else {
+        console.log(`❌ No matches found for "${suggestion.original}"`);
+        
+        // Try a more flexible search to see what might be wrong
+        const flexibleRegex = new RegExp(escapedOriginal.split('\\s+').join('\\s*'), 'gi');
+        const flexibleMatches = htmlText.match(flexibleRegex);
+        console.log(`Flexible search results:`, flexibleMatches);
+      }
     });
 
-    return highlightedText;
+    console.log('Final HTML preview:', htmlText.substring(0, 500));
+    return htmlText;
   };
 
   const handleTextClick = (e: React.MouseEvent) => {
@@ -141,6 +170,7 @@ export const PDFViewer = ({ suggestions, onSuggestionHover, onSuggestionClick, s
                         target.closest('[data-suggestion-id]')?.getAttribute('data-suggestion-id');
     if (suggestionId) {
       e.preventDefault();
+      console.log('Clicked suggestion:', suggestionId);
       onSuggestionClick(suggestionId);
     }
   };
@@ -229,10 +259,6 @@ export const PDFViewer = ({ suggestions, onSuggestionHover, onSuggestionClick, s
             onMouseLeave={handleTextLeave}
             dangerouslySetInnerHTML={{ 
               __html: highlightSuggestions(policyText)
-                .replace(/\n\n/g, '</p><p class="mb-4">')
-                .replace(/\n/g, '<br>')
-                .replace(/^/, '<p class="mb-4">')
-                .replace(/$/, '</p>')
             }}
           />
 
