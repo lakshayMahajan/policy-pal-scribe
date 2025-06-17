@@ -1,19 +1,14 @@
 
 import React from 'react';
-import { PawPrint, Upload, History, Users, BarChart3 } from 'lucide-react';
+import { PawPrint } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link, useLocation } from 'react-router-dom';
+import { navItems } from '@/dummy-data/navItems';
 
 export const Header = () => {
   const location = useLocation();
 
-  const navItems = [
-    { path: '/', label: 'Live Analysis', icon: BarChart3 },
-    { path: '/upload', label: 'Upload Policy', icon: Upload },
-    { path: '/workflow', label: 'Agent Workflow', icon: Users },
-    { path: '/history', label: 'Assessment History', icon: History },
-  ];
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Suggestion } from '@/types/insurance';
+import { homeownerPolicyText } from '@/dummy-data/policyText';
 
 interface PolicyTextProps {
   suggestions: Suggestion[];
@@ -9,27 +10,10 @@ interface PolicyTextProps {
   selectedSuggestion: string | null;
 }
 
-const mockPolicyText = `
-HOMEOWNER'S INSURANCE POLICY
-
-SECTION 1: PROPERTY COVERAGE
-
-This policy provides coverage for your dwelling and personal property against covered perils as defined herein.
-
-CLAUSE LC-401: DWELLING COVERAGE
-We will pay for direct physical loss to the dwelling on the residence premises shown in the Declarations caused by a covered peril. Damage caused by water, whether from natural causes or mechanical failure, is subject to the terms and conditions outlined in this section.
-
-CLAUSE COV-205: LIABILITY COVERAGE  
-We will cover sums that the insured becomes legally obligated to pay as damages because of bodily injury or property damage covered by this policy. The company will use reasonable efforts to defend any suit seeking damages covered by this policy.
-
-CLAUSE NOT-101: CLAIMS PROCESS
-The policyholder must notify the company within a reasonable time of any claim or occurrence that may result in a claim under this policy. Failure to provide timely notice may result in denial of coverage.
-
-GENERAL CONDITIONS
-This policy is subject to all terms, conditions, and exclusions set forth herein. Any modifications must be made in writing and signed by an authorized representative of the company.
-`;
 
 export const PolicyText = ({ suggestions, onSuggestionHover, onSuggestionClick, selectedSuggestion }: PolicyTextProps) => {
+  const text = homeownerPolicyText;
+
   const renderTextWithHighlights = () => {
     let lastIndex = 0;
     const elements: React.ReactNode[] = [];
@@ -42,7 +26,7 @@ export const PolicyText = ({ suggestions, onSuggestionHover, onSuggestionClick, 
       if (suggestion.start > lastIndex) {
         elements.push(
           <span key={`text-${index}`}>
-            {mockPolicyText.slice(lastIndex, suggestion.start)}
+            {text.slice(lastIndex, suggestion.start)}
           </span>
         );
       }
@@ -94,10 +78,10 @@ export const PolicyText = ({ suggestions, onSuggestionHover, onSuggestionClick, 
     });
     
     // Add remaining text
-    if (lastIndex < mockPolicyText.length) {
+    if (lastIndex < text.length) {
       elements.push(
         <span key="text-end">
-          {mockPolicyText.slice(lastIndex)}
+          {text.slice(lastIndex)}
         </span>
       );
     }
