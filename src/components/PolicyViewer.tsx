@@ -2,48 +2,56 @@
 import React, { useState } from 'react';
 import { SuggestionCard } from '@/components/SuggestionCard';
 import { PolicyText } from '@/components/PolicyText';
-
-interface Suggestion {
-  id: string;
-  text: string;
-  original: string;
-  suggestion: string;
-  start: number;
-  end: number;
-  approved: boolean | null;
-  type: 'clarity' | 'legal' | 'style' | 'compliance';
-}
+import { Suggestion } from '@/types/insurance';
 
 const mockSuggestions: Suggestion[] = [
   {
     id: 's1',
-    text: 'This water damage clause is ambiguous and could lead to disputes',
+    clauseId: 'LC-401',
+    clauseType: 'Liability',
+    text: 'Water damage clause creates significant exploit opportunity',
     original: 'Damage caused by water',
-    suggestion: 'Damage caused by natural flooding, burst pipes, or accidental water discharge',
+    suggestion: 'Damage caused by sudden and accidental water discharge from plumbing systems, excluding floods, groundwater, and gradual leaks',
     start: 234,
     end: 256,
     approved: null,
-    type: 'clarity'
+    type: 'Exploit Risk',
+    riskScore: 8,
+    exploitScenario: 'A policyholder could claim any water damage regardless of cause. Without "sudden and accidental" language, claims for gradual leaks, floods, or poor maintenance would likely succeed, leading to unintended payouts.',
+    identifiedBy: 'Risk Scorer + Claim Generator',
+    severity: 'High'
   },
   {
     id: 's2',
-    text: 'Legal terminology should be more precise',
+    clauseId: 'COV-205',
+    clauseType: 'Coverage',
+    text: 'Liability limitation missing critical constraints',
     original: 'reasonable efforts',
-    suggestion: 'commercially reasonable efforts as defined in Section 12.3',
+    suggestion: 'commercially reasonable efforts as defined in Section 12.3, not to exceed $50,000 in aggregate costs',
     start: 445,
     end: 462,
     approved: null,
-    type: 'legal'
+    type: 'Missing Limitation',
+    riskScore: 7,
+    exploitScenario: 'Without specific cost caps, "reasonable efforts" could justify unlimited expenses. A policyholder could argue that hiring expensive experts or contractors was "reasonable" for their situation.',
+    identifiedBy: 'Legal Compliance Engine',
+    severity: 'High'
   },
   {
     id: 's3',
-    text: 'This clause needs better structure for clarity',
+    clauseId: 'NOT-101',
+    clauseType: 'Coverage',
+    text: 'Notification period violates state regulatory requirements',
     original: 'The policyholder must notify the company within a reasonable time of any claim',
-    suggestion: 'The policyholder must provide written notification to the company within thirty (30) days of discovering any claim',
+    suggestion: 'The policyholder must provide written notification to the company within thirty (30) days of discovering any claim or potential claim',
     start: 678,
     end: 756,
     approved: null,
-    type: 'compliance'
+    type: 'Regulatory Conflict',
+    riskScore: 6,
+    exploitScenario: 'In this jurisdiction, "reasonable time" notification clauses are void. Claims could be accepted years after occurrence if no specific timeframe is established, creating massive exposure.',
+    identifiedBy: 'Regulatory Compliance Scanner',
+    severity: 'Medium'
   }
 ];
 

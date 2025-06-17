@@ -1,32 +1,56 @@
 
 import React from 'react';
-import { PawPrint, FileText, Search } from 'lucide-react';
+import { PawPrint, Upload, History, Users, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Link, useLocation } from 'react-router-dom';
 
 export const Header = () => {
+  const location = useLocation();
+
+  const navItems = [
+    { path: '/', label: 'Live Analysis', icon: BarChart3 },
+    { path: '/upload', label: 'Upload Policy', icon: Upload },
+    { path: '/workflow', label: 'Agent Workflow', icon: Users },
+    { path: '/history', label: 'Assessment History', icon: History },
+  ];
+
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-8">
           <div className="flex items-center space-x-2">
             <PawPrint className="h-8 w-8 text-amber-500" />
             <h1 className="text-xl font-semibold text-gray-900">Retriever</h1>
           </div>
-          <span className="text-sm text-gray-500">Live-Edit Mode</span>
+          
+          <nav className="flex items-center space-x-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  location.pathname === item.path
+                    ? 'bg-amber-100 text-amber-800'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                }`}
+              >
+                <item.icon className="h-4 w-4" />
+                <span>{item.label}</span>
+              </Link>
+            ))}
+          </nav>
         </div>
         
         <div className="flex items-center space-x-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input 
-              placeholder="Jump to clause..." 
-              className="pl-10 w-64"
+              placeholder="Search clauses..." 
+              className="w-64"
             />
           </div>
           <Button variant="outline" size="sm">
-            <FileText className="h-4 w-4 mr-2" />
-            Export
+            Export Report
           </Button>
         </div>
       </div>
