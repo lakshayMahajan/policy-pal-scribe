@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { PawPrint, Upload, History, Users, BarChart3 } from 'lucide-react';
+import { PawPrint, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link, useLocation } from 'react-router-dom';
@@ -10,9 +10,6 @@ export const Header = () => {
 
   const navItems = [
     { path: '/', label: 'Live Analysis', icon: BarChart3 },
-    { path: '/upload', label: 'Upload Policy', icon: Upload },
-    { path: '/workflow', label: 'Agent Workflow', icon: Users },
-    { path: '/history', label: 'Assessment History', icon: History },
   ];
 
   return (
