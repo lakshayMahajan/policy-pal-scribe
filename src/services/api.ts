@@ -32,7 +32,7 @@ export interface ApiResponse {
   suggestions: ApiSuggestion[];
 }
 
-const LOCAL_URL = 'https://retriever-toq5.onrender.com';
+const LOCAL_URL = 'http://127.0.0.1:5080';
 
 export const analyzeDocument = async (documentText: string): Promise<ApiResponse> => {
   const response = await fetch(`${LOCAL_URL}/api/v2/insurance/analyze`, {
