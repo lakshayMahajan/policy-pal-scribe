@@ -1,0 +1,50 @@
+[
+  {
+    "id": "s1",
+    "clauseId": "LC-401",
+    "clauseType": "Liability",
+    "text": "Water damage clause creates significant exploit opportunity",
+    "original": "Water damage is covered with no exceptions.",
+    "suggestion": "Add exclusion for gradual water seepage.",
+    "start": 102,
+    "end": 143,
+    "approved": null,
+    "type": "Exploit Risk",
+    "riskScore": 8,
+    "exploitScenario": "A homeowner can claim repeated small leaks as major events.",
+    "identifiedBy": "Risk Scorer + Claim Generator",
+    "severity": "High"
+  },
+  {
+    "id": "s2",
+    "clauseId": "COV-205",
+    "clauseType": "Coverage",
+    "text": "Liability limitation missing critical constraints",
+    "original": "Policy covers all liabilities.",
+    "suggestion": "Specify exclusions for intentional acts.",
+    "start": 201,
+    "end": 242,
+    "approved": null,
+    "type": "Missing Limitation",
+    "riskScore": 7,
+    "exploitScenario": "Intentional acts are not excluded, leading to abuse.",
+    "identifiedBy": "Legal Compliance Engine",
+    "severity": "High"
+  },
+  {
+    "id": "s3",
+    "clauseId": "NOT-101",
+    "clauseType": "Coverage",
+    "text": "Notification period violates state regulatory requirements",
+    "original": "Notice must be provided within 90 days.",
+    "suggestion": "Change notice period to 30 days for compliance.",
+    "start": 301,
+    "end": 340,
+    "approved": null,
+    "type": "Regulatory Conflict",
+    "riskScore": 6,
+    "exploitScenario": "State law requires a shorter notification period.",
+    "identifiedBy": "Regulatory Compliance Scanner",
+    "severity": "Medium"
+  }
+]

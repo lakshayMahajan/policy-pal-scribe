@@ -1,0 +1,35 @@
+[
+  {
+    "id": "agent1",
+    "name": "Risk Scorer",
+    "icon": "AlertCircle",
+    "status": "completed",
+    "progress": 100,
+    "findings": 2,
+    "description": "Identifies and scores risks in policy clauses.",
+    "lastRun": "2024-06-16T14:25:00Z",
+    "processingTime": "45s"
+  },
+  {
+    "id": "agent2",
+    "name": "Claim Generator",
+    "icon": "FileText",
+    "status": "completed",
+    "progress": 100,
+    "findings": 1,
+    "description": "Simulates possible exploit scenarios for each clause.",
+    "lastRun": "2024-06-16T14:26:00Z",
+    "processingTime": "31s"
+  },
+  {
+    "id": "agent3",
+    "name": "Legal Compliance Engine",
+    "icon": "MessageSquare",
+    "status": "completed",
+    "progress": 100,
+    "findings": 1,
+    "description": "Checks clauses against legal and regulatory requirements.",
+    "lastRun": "2024-06-16T14:27:00Z",
+    "processingTime": "39s"
+  }
+]

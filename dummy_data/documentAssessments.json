@@ -1,0 +1,12 @@
+[
+  {
+    "confidenceScore": 74,
+    "totalClauses": 12,
+    "flaggedClauses": 3,
+    "riskDistribution": {
+      "high": 2,
+      "medium": 1,
+      "low": 0
+    }
+  }
+]

@@ -32,7 +32,7 @@ export interface ApiResponse {
   suggestions: ApiSuggestion[];
 }
 
-const LOCAL_URL = 'http://localhost:3000';
+const LOCAL_URL = 'https://retriever-toq5.onrender.com';
 
 export const analyzeDocument = async (documentText: string): Promise<ApiResponse> => {
   const response = await fetch(`${LOCAL_URL}/api/v2/insurance/analyze`, {
@@ -40,14 +40,14 @@ export const analyzeDocument = async (documentText: string): Promise<ApiResponse
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ text: documentText }),
+    body: JSON.stringify({ document_text: documentText }), // <-- Use "text" as the key
   });
-  
+
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`Failed to analyze document: ${response.status} - ${errorText}`);
   }
-  
+
   return response.json();
 };
 

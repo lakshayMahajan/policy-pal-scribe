@@ -1,0 +1,22 @@
+[
+  {
+    "id": "a1",
+    "policyName": "Homeowners Policy A",
+    "uploadDate": "2024-06-15",
+    "status": "completed",
+    "riskScore": 7.8,
+    "flaggedClauses": 3,
+    "totalClauses": 12,
+    "version": "1.0"
+  },
+  {
+    "id": "a2",
+    "policyName": "Auto Policy B",
+    "uploadDate": "2024-06-10",
+    "status": "processing",
+    "riskScore": 0,
+    "flaggedClauses": 0,
+    "totalClauses": 10,
+    "version": "0.9"
+  }
+]
